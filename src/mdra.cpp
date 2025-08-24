@@ -42,10 +42,10 @@ DeviceConfig DeviceConfig::getConfigForPreset(DevicePreset type) {
         Input(EV_KEY, BTN_EXTRA),
         Input(EV_REL, REL_X),
         Input(EV_REL, REL_Y),
-        Input(EV_REL,  REL_HWHEEL),
-        Input(EV_REL,  REL_WHEEL),
-        Input(EV_REL,  REL_WHEEL_HI_RES),
-        Input(EV_REL,  REL_HWHEEL_HI_RES)
+        Input(EV_REL, REL_HWHEEL),
+        Input(EV_REL, REL_WHEEL),
+        Input(EV_REL, REL_WHEEL_HI_RES),
+        Input(EV_REL, REL_HWHEEL_HI_RES)
       };
       break;
     case DevicePreset::Other:
@@ -86,14 +86,12 @@ void VirtualDevice::create() {
       }
     }
   }
-  std::cout << config.inputs.size() << std::endl;
   // set ioctl EvCode
   for (int i = 0; i < config.inputs.size(); i++) {
     if (ioctl(fd, evtypeToUinputIoctl(config.inputs.at(i).ev.type), config.inputs.at(i).ev.code) < 0) {
       std::cerr << "Faital: faild to set ioctl(UI_SET_EVBIT) EV_TYPE: " << i << std::strerror(errno) << std::endl;
       std::abort();
     }
-    std::cout << evtypeToUinputIoctl(config.inputs.at(i).ev.type) << " " << config.inputs.at(i).ev.code << std::endl;
   }
 
   // deviceを作成
