@@ -1,0 +1,2 @@
+/usr/bin/ar qc libmdra.a CMakeFiles/mdra.dir/src/mdra.cpp.o
+/usr/bin/ranlib libmdra.a

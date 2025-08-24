@@ -1,0 +1,4 @@
+/home/ergodic/Repos/mdra/build/CMakeFiles/mdra.dir
+/home/ergodic/Repos/mdra/build/CMakeFiles/example.dir
+/home/ergodic/Repos/mdra/build/CMakeFiles/edit_cache.dir
+/home/ergodic/Repos/mdra/build/CMakeFiles/rebuild_cache.dir

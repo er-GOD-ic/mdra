@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/example.dir/link.d CMakeFiles/example.dir/example/example.cpp.o -o example  libmdra.a
