@@ -3,6 +3,41 @@
 
 namespace mdra {
 
+Device Device::getDeviceByPath(const std::string& path) {
+  Device device;
+  if (!std::filesystem::exists(path)) {
+    throw std::runtime_error("Device path does not exist: " + path);
+  }
+
+  device.device_path = path;
+  device.fd = open(path.c_str(), O_RDWR | O_NONBLOCK);
+  if (device.fd < 0) {
+    throw std::runtime_error("Failed to open device: " + path);
+  }
+
+  return device;
+}
+
+Device Device::getDeviceById(const std::string& id) {
+  namespace fs = std::filesystem;
+  Device device;
+
+  for (auto& entry : fs::directory_iterator("/dev/input/by-id/")) {
+    std::string path = entry.path();
+    if (path.find(id) != std::string::npos) {
+      device = getDeviceByPath(path);
+      return device;
+    }
+  }
+
+  throw std::runtime_error("Device with ID " + id + " not found");
+}
+
+Device Device::getDeviceByEventId(int id) {
+  std::string path = "/dev/input/event" + std::to_string(id);
+  return getDeviceByPath(path);
+}
+
 unsigned long evtypeToUinputIoctl(EvType evtype) {
   switch (evtype) {
     case EV_KEY:  return UI_SET_KEYBIT;
@@ -18,7 +53,7 @@ unsigned long evtypeToUinputIoctl(EvType evtype) {
   }
 }
 
-std::vector<Input> DeviceConfig::allKeyboardKeys() {
+std::vector<Input> DeviceInputList::allKeyboardKeys() {
   std::vector<Input> keys;
   for (EvCode i = 0; i < KEY_MAX; i++) {
     Input key(EV_KEY, i);
@@ -27,8 +62,8 @@ std::vector<Input> DeviceConfig::allKeyboardKeys() {
   return keys;
 }
 
-DeviceConfig DeviceConfig::getConfigForPreset(DevicePreset type) {
-  DeviceConfig config;
+DeviceInputList DeviceInputList::getConfigForPreset(DevicePreset type) {
+  DeviceInputList config;
   switch (type) {
     case DevicePreset::Keyboard:
       config.inputs = allKeyboardKeys();
@@ -55,23 +90,28 @@ DeviceConfig DeviceConfig::getConfigForPreset(DevicePreset type) {
 }
 
 VirtualDevice::VirtualDevice(const std::string& name, const DevicePreset& preset) {
-  fd = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
+  std::string device_path = "/dev/uinput";
+  fd = open(device_path.c_str(), O_WRONLY | O_NONBLOCK);
   if (fd < 0) {
     std::cerr << "Faital: faild to open /dev/uinput" << std::strerror(errno) << std::endl;
     std::abort();
   }
   // deviceを設計
-  std::memset(&device, 0, sizeof(device));
-  std::strncpy(device.name, name.c_str(), UINPUT_MAX_NAME_SIZE - 1);
-  device.name[UINPUT_MAX_NAME_SIZE - 1] = '\0';
-  device.id.bustype = BUS_USB;
-  device.id.vendor  = 0x1234;
-  device.id.product = 0x5678;
-  device.id.version = 1;
-
-  config = DeviceConfig::getConfigForPreset(preset);
+  std::memset(&virtual_device, 0, sizeof(virtual_device));
+  std::strncpy(virtual_device.name, name.c_str(), UINPUT_MAX_NAME_SIZE - 1);
+  virtual_device.name[UINPUT_MAX_NAME_SIZE - 1] = '\0';
+  virtual_device.id.bustype = BUS_USB;
+  virtual_device.id.vendor  = 0x1234;
+  virtual_device.id.product = 0x5678;
+  virtual_device.id.version = 1;
+  // deviceのプリセット設定を適応
+  config = DeviceInputList::getConfigForPreset(preset);
 }
-VirtualDevice::~VirtualDevice() {};
+VirtualDevice::~VirtualDevice() {
+  ioctl(fd, UI_DEV_DESTROY);
+  close(fd);
+  std::cout << "VirtualDevice has been deleted successfully." << std::endl;
+};
 
 void VirtualDevice::create() {
   // set ioctl EvType
@@ -95,7 +135,7 @@ void VirtualDevice::create() {
   }
 
   // deviceを作成
-  if (ioctl(fd, UI_DEV_SETUP, &device) < 0) {
+  if (ioctl(fd, UI_DEV_SETUP, &virtual_device) < 0) {
     perror("UI_DEV_SETUP");
     exit(1);
   }
@@ -103,7 +143,7 @@ void VirtualDevice::create() {
     perror("UI_DEV_CREATE");
     exit(1);
   }
-  std::cout << "VirtualDevice " << device.name << " has been created!" << std::endl;
+  std::cout << "VirtualDevice " << virtual_device.name << " has been created!" << std::endl;
 }
 
 Input::Input(const EvType& type, const EvCode& code, const EvValue& value) {

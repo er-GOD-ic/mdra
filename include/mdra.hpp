@@ -6,6 +6,7 @@
 
 #include <unistd.h>
 #include <fcntl.h>
+#include <filesystem>
 #include <sys/ioctl.h>
 
 #include <linux/input.h>
@@ -28,7 +29,6 @@ public:
   Input() = delete;
   Input(const Input&) = default;
   Input(const EvType& type, const EvCode& code, const EvValue& value = 1);
-
 };
 
 // custom operator
@@ -46,20 +46,29 @@ enum class DevicePreset {
   Other
 };
 
-class DeviceConfig {
+class DeviceInputList {
 private:
   static std::vector<Input> allKeyboardKeys();
 public:
   std::vector<Input> inputs;
 
-  static DeviceConfig getConfigForPreset(DevicePreset preset);
+  static DeviceInputList getConfigForPreset(DevicePreset preset);
 };
 
-class VirtualDevice {
+class Device {
+private:
+  static Device getDeviceByPath(const std::string& path);
+  static Device getDeviceById(const std::string& id);
+  static Device getDeviceByEventId(int id);
 public:
-  FileDiscriptor fd;
-  struct uinput_setup device;
-  DeviceConfig config;
+  std::string device_path;
+  FileDiscriptor fd = -1;
+};
+
+class VirtualDevice : public Device {
+public:
+  struct uinput_setup virtual_device;
+  DeviceInputList config;
 
   // constructor
   VirtualDevice(const std::string& name, const DevicePreset& config = DevicePreset::Keyboard);
