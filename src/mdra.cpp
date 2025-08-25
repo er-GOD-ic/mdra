@@ -1,9 +1,10 @@
 #include <iostream>
-
 #include <cstring>
 #include <filesystem>
 
 #include "mdra.hpp"
+#include "event/kbd.hpp"
+#include "event/mouse.hpp"
 
 namespace mdra {
 
@@ -57,35 +58,14 @@ unsigned long evtypeToUinputIoctl(EvType evtype) {
   }
 }
 
-std::vector<Input> DeviceInputList::allKeyboardKeys() {
-  std::vector<Input> keys;
-  for (EvCode i = 0; i < KEY_MAX; i++) {
-    Input key(EV_KEY, i);
-    keys += key;
-  }
-  return keys;
-}
-
 DeviceInputList DeviceInputList::getConfigForPreset(DevicePreset type) {
   DeviceInputList config;
   switch (type) {
     case DevicePreset::Keyboard:
-      config.inputs = allKeyboardKeys();
+      for (auto& ref : kbd::general_kbd_keys) { config.inputs += ref.get(); }
       break;
     case DevicePreset::Mouse:
-      config.inputs = {
-        Input(EV_KEY, BTN_LEFT),
-        Input(EV_KEY, BTN_RIGHT),
-        Input(EV_KEY, BTN_MIDDLE),
-        Input(EV_KEY, BTN_SIDE),
-        Input(EV_KEY, BTN_EXTRA),
-        Input(EV_REL, REL_X),
-        Input(EV_REL, REL_Y),
-        Input(EV_REL, REL_HWHEEL),
-        Input(EV_REL, REL_WHEEL),
-        Input(EV_REL, REL_WHEEL_HI_RES),
-        Input(EV_REL, REL_HWHEEL_HI_RES)
-      };
+      for (auto& ref : mouse::general_mouse_events) { config.inputs += ref.get(); }
       break;
     case DevicePreset::Other:
       break;

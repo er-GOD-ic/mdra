@@ -46,8 +46,6 @@ enum class DevicePreset {
 };
 
 class DeviceInputList {
-private:
-  static std::vector<Input> allKeyboardKeys();
 public:
   std::vector<Input> inputs;
 
@@ -65,6 +63,8 @@ public:
 };
 
 class VirtualDevice : public Device {
+private:
+  Device target;
 public:
   struct uinput_setup virtual_device;
   DeviceInputList config;
@@ -74,6 +74,9 @@ public:
   ~VirtualDevice();
 
   void create();
+
+  VirtualDevice remap(const Device& target);
+  VirtualDevice map(const Device& target);
 };
 
 }

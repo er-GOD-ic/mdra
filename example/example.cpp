@@ -1,8 +1,15 @@
 #include <iostream>
 #include <mdra.hpp>
+#include <event/kbd.hpp>
 
 using namespace mdra;
 using namespace kbd;
+
+class MyKBD : VirtualDevice {
+  void remap() override {
+
+  }
+}
 
 int main() {
   Device phisKbd = Device::getDeviceById("usb-Keychron_Keychron_K3-event-kbd");
@@ -12,16 +19,16 @@ int main() {
 
   kbd.grab(phisKbd).remap = [](){
     // arrow keys
-    caps + l >> right_arrow;
-    caps + h >> left_arrow;
-    caps + j >> down_arrow;
-    caps + k >> up_arrow;
+    CAPS + H >> LEFT;
+    CAPS + J >> DOWN;
+    CAPS + K >> UP;
+    CAPS + L >> RIGHT;
 
     // utils
     bool caps_used_as_modi = false;
-    caps + !(all_kbd_keys - caps) >> (caps_used_as_modi)[]{ caps_used_as_modi = true };
-    caps + x >> del;
-    caps.up & !caps_used_as_modi >> backspace;
+    CAPS + !(all_kbd_keys - CAPS) >> (caps_used_as_modi)[]{ caps_used_as_modi = true };
+    CAPS + X >> DEL;
+    CAPS.up & !caps_used_as_modi >> backspace;
   }
 
   std::string dummy;

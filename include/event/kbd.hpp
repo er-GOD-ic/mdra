@@ -1,5 +1,10 @@
-#include "mdra.hpp"
+#include <array>
+#include <functional>
 #include <linux/input-event-codes.h>
+
+#include "mdra.hpp"
+
+#define GENERAL_KBD_KEYS 133
 
 using namespace mdra;
 
@@ -173,5 +178,21 @@ inline Input HANGUEL(EV_KEY, KEY_HANGUEL);
 inline Input HANJA(EV_KEY, KEY_HANJA);
 inline Input COMPOSE(EV_KEY, KEY_COMPOSE);
 inline Input EURO(EV_KEY, KEY_EURO);
+
+
+inline std::array<std::reference_wrapper<Input>, GENERAL_KBD_KEYS> general_kbd_keys = {
+  ESC, DELETE, BACKSPACE, ENTER, TAB, CAPS, NUMLOCK, SCROLLLOCK,
+  HOME, END, PAGEUP, PAGEDOWN, SCALE, SYSRQ, INSERT, LEFT, DOWN, UP, RIGHT,
+  LSHIFT, LCTRL, LMETA, LALT, RSHIFT, RCTRL, RMETA, RALT,
+  N_1, N_2, N_3, N_4, N_5, N_6, N_7, N_8, N_9, N_0,
+  KP_1, KP_2, KP_3, KP_4, KP_5, KP_6, KP_7, KP_8, KP_9, KP_0,
+  KP_MINUS, KP_PLUS, KP_DOT, KP_ASTERISK, KP_JPCOMMA, KP_ENTER, KP_SLASH, KP_EQUAL, KP_COMMA,
+  F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15, F16, F17, F18, F19, F20, F21, F22, F23, F24,
+  A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
+  MINUS, EQUAL, LEFTBRACE, RIGHTBRACE, SEMICOLON, APOSTROPHE,
+  GRAVE, SLASH, BACKSLASH, COMMA, DOT, SPACE, DOLLAR,
+  ZENKAKUHANKAKU, RO, KATAKANA, HIRAGANA, HENKAN, KATAKANAHIRAGANA, MUHENKAN, YEN,
+  ISO_102ND, HANGEUL, HANGUEL, HANJA, COMPOSE, EURO,
+};
 
 }
