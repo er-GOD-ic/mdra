@@ -1,0 +1,14 @@
+[
+{
+  "directory": "/home/ergodic/Repos/mdra/build",
+  "command": "/usr/bin/c++  -I/home/ergodic/Repos/mdra/include -std=gnu++23 -o CMakeFiles/mdra.dir/src/mdra.cpp.o -c /home/ergodic/Repos/mdra/src/mdra.cpp",
+  "file": "/home/ergodic/Repos/mdra/src/mdra.cpp",
+  "output": "CMakeFiles/mdra.dir/src/mdra.cpp.o"
+},
+{
+  "directory": "/home/ergodic/Repos/mdra/build",
+  "command": "/usr/bin/c++  -I/home/ergodic/Repos/mdra/include -std=gnu++23 -o CMakeFiles/example.dir/example/example.cpp.o -c /home/ergodic/Repos/mdra/example/example.cpp",
+  "file": "/home/ergodic/Repos/mdra/example/example.cpp",
+  "output": "CMakeFiles/example.dir/example/example.cpp.o"
+}
+]

@@ -1,24 +1,22 @@
-cmake_minimum_required(VERSION 3.12)
-project(mdra_example_project CXX)
+cmake_minimum_required(VERSION 3.20)
+project(mdra_project LANGUAGES CXX)
 
-# ソースコードの標準はC++17（必要に応じて変更可）
-set(CMAKE_CXX_STANDARD 17)
+# compile_commands.json を生成
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON) 
+
+# C++ 標準
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# ヘッダファイルのディレクトリをインクルードパスに追加
-include_directories(${CMAKE_SOURCE_DIR}/include)
+# include ディレクトリを追加
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
-# メインライブラリ(mdra)
-add_library(mdra STATIC
-    src/mdra.cpp
-    include/mdra.hpp
-)
+# mdra ライブラリを作成
+add_library(mdra STATIC src/mdra.cpp)
 
-target_include_directories(mdra PUBLIC ${CMAKE_SOURCE_DIR}/include)
+# example 実行ファイル
+add_executable(example example/example.cpp)
 
-# example実行ファイル
-add_executable(example
-    example/example.cpp
-)
-
+# example に mdra ライブラリをリンク
 target_link_libraries(example PRIVATE mdra)
+

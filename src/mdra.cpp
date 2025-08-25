@@ -1,4 +1,8 @@
 #include <iostream>
+
+#include <cstring>
+#include <filesystem>
+
 #include "mdra.hpp"
 
 namespace mdra {

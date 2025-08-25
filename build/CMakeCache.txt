@@ -122,7 +122,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=mdra_example_project
+CMAKE_PROJECT_NAME:STATIC=mdra_project
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/usr/bin/ranlib
@@ -197,6 +197,15 @@ mdra_example_project_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
 mdra_example_project_SOURCE_DIR:STATIC=/home/ergodic/Repos/mdra
+
+//Value Computed by CMake
+mdra_project_BINARY_DIR:STATIC=/home/ergodic/Repos/mdra/build
+
+//Value Computed by CMake
+mdra_project_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+mdra_project_SOURCE_DIR:STATIC=/home/ergodic/Repos/mdra
 
 
 ########################

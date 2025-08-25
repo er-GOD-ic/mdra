@@ -1,12 +1,11 @@
-#include <memory>
+#pragma once
+
 #include <string>
 #include <vector>
 #include <cstdint>
-#include <cstring>
 
-#include <unistd.h>
 #include <fcntl.h>
-#include <filesystem>
+#include <unistd.h>
 #include <sys/ioctl.h>
 
 #include <linux/input.h>
