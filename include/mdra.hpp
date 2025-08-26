@@ -19,18 +19,37 @@ using EvValue = uint16_t;
 
 namespace mdra {
 
+class Device;
+
 unsigned long evtypeToUinputIoctl(EvType evtype);
 
+enum class Trigger {
+  Occuring,
+  Start,
+  Update,
+  End
+};
+
 class Input {
+private:
+  Trigger trigger = Trigger::Occuring;
+  int valid_time = 0;
 public:
   struct input_event ev = {0};
+  
   // constructor
   Input() = delete;
   Input(const Input&) = default;
-  Input(const EvType& type, const EvCode& code, const EvValue& value = 1);
+  Input(const EvType& type, const EvCode& code);
+
+  // check codes
+  bool isValid(const Input* input);
+  explicit operator bool() const;
 };
 
 // custom operator
+bool operator==(const Input& lhs, const Input& rhs);                                          // Input == Input
+
 std::vector<Input> operator+(const Input& lhs, const Input& rhs);                             // Input + Input
 std::vector<Input> operator+(const Input& lhs, const std::vector<Input>& rhs);                // Input + vector<Input>
 std::vector<Input> operator+(const std::vector<Input>& lhs, const Input& rhs);                // vector<Input> + Input
@@ -38,6 +57,12 @@ std::vector<Input> operator+(const std::vector<Input>& lhs, const std::vector<In
 
 std::vector<Input>& operator+=(std::vector<Input>& lhs, const Input& rhs);                    // vector<Input> += Input
 std::vector<Input>& operator+=(std::vector<Input>& lhs, const std::vector<Input>& rhs);       // vector<Input> += vector<Input>
+
+std::vector<Input> operator-(const std::vector<Input>& lhs, const Input& rhs);                // vector<Input> - Input
+std::vector<Input> operator-(const std::vector<Input>& lhs, const std::vector<Input>& rhs);   // vector<Input> - vector<Input>
+
+std::vector<Input>& operator+=(std::vector<Input>& lhs, const Input& rhs);                    // vector<Input> -= Input
+std::vector<Input>& operator+=(std::vector<Input>& lhs, const std::vector<Input>& rhs);       // vector<Input> -= vector<Input>
 
 enum class DevicePreset {
   Keyboard,
@@ -53,13 +78,13 @@ public:
 };
 
 class Device {
-private:
-  static Device getDeviceByPath(const std::string& path);
-  static Device getDeviceById(const std::string& id);
-  static Device getDeviceByEventId(int id);
 public:
   std::string device_path;
   FileDiscriptor fd = -1;
+
+  static Device getDeviceByPath(const std::string& path);
+  static Device getDeviceById(const std::string& id);
+  static Device getDeviceByEventId(int id);
 };
 
 class VirtualDevice : public Device {
@@ -75,8 +100,8 @@ public:
 
   void create();
 
-  VirtualDevice remap(const Device& target);
-  VirtualDevice map(const Device& target);
+  virtual void remap();
+  virtual void map();
 };
 
 }

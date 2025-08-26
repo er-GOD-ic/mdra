@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstring>
 #include <filesystem>
+#include <algorithm>
 
 #include "mdra.hpp"
 #include "event/kbd.hpp"
@@ -130,10 +131,34 @@ void VirtualDevice::create() {
   std::cout << "VirtualDevice " << virtual_device.name << " has been created!" << std::endl;
 }
 
-Input::Input(const EvType& type, const EvCode& code, const EvValue& value) {
+bool Input::isValid(const Input* input) {
+  switch (trigger) {
+    case Trigger::Occuring:
+      return input.ev.value != 0;
+    case Trigger::Start:
+      return input.ev.value == 1 && input.valid_time == 1;
+    case Trigger::Update:
+      return input.ev.value != 0 && input.valid_time > 1;
+    case Trigger::End:
+      if (input.ev.type != EV_KEY) return false;
+      return input.ev.value == 0;
+    default:
+      return false;
+  }
+}
+
+Input::operator bool() const {
+  return isValid(this);
+}
+
+Input::Input(const EvType& type, const EvCode& code) {
   ev.type = type;
   ev.code = code;
-  ev.value = value;
+}
+
+// Input == Input
+bool operator==(const Input& lhs, const Input& rhs) {
+  return lhs.ev.type == rhs.ev.type && lhs.ev.code == rhs.ev.code;
 }
 
 // Input + Input
@@ -174,6 +199,40 @@ std::vector<Input>& operator+=(std::vector<Input>& lhs, const Input& rhs) {
 std::vector<Input>& operator+=(std::vector<Input>& lhs, const std::vector<Input>& rhs) {
     lhs.insert(lhs.end(), rhs.begin(), rhs.end());
     return lhs;
+}
+
+// vector<Input> - Input
+std::vector<Input> operator-(const std::vector<Input>& lhs, const Input& rhs) {
+  std::vector<Input> result;
+  std::copy_if(lhs.begin(), lhs.end(), std::back_inserter(result),
+               [&rhs](const Input& x) { return !(x == rhs); });
+  return result;
+}
+
+// vector<Input> - vector<Input>
+std::vector<Input> operator-(const std::vector<Input>& lhs, const std::vector<Input>& rhs) {
+  std::vector<Input> result = lhs;
+  for (const auto& r : rhs) {
+    result = result - r; // 上のoperator-を再利用
+  }
+  return result;
+}
+
+// vector<Input> -= Input
+std::vector<Input>& operator-=(std::vector<Input>& lhs, const Input& rhs) {
+  lhs.erase(
+    std::remove(lhs.begin(), lhs.end(), rhs),
+    lhs.end()
+  );
+  return lhs;
+}
+
+// vector<Input> -= vector<Input>
+std::vector<Input>& operator-=(std::vector<Input>& lhs, const std::vector<Input>& rhs) {
+  for (const auto& r : rhs) {
+    lhs -= r;
+  }
+  return lhs;
 }
 
 }
