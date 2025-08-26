@@ -131,29 +131,33 @@ void VirtualDevice::create() {
   std::cout << "VirtualDevice " << virtual_device.name << " has been created!" << std::endl;
 }
 
-bool Input::isValid(const Input* input) {
+bool Input::isValid() const {
   switch (trigger) {
     case Trigger::Occuring:
-      return input.ev.value != 0;
+      return this -> ev.value != 0;
     case Trigger::Start:
-      return input.ev.value == 1 && input.valid_time == 1;
+      return this -> ev.value == 1 && this -> valid_time == 1;
     case Trigger::Update:
-      return input.ev.value != 0 && input.valid_time > 1;
+      return this -> ev.value != 0 && this -> valid_time > 1;
     case Trigger::End:
-      if (input.ev.type != EV_KEY) return false;
-      return input.ev.value == 0;
+      if (this -> ev.type != EV_KEY) return false;
+      return this -> ev.value == 0;
     default:
       return false;
   }
 }
 
 Input::operator bool() const {
-  return isValid(this);
+  return isValid();
 }
 
 Input::Input(const EvType& type, const EvCode& code) {
   ev.type = type;
   ev.code = code;
+}
+
+Inputs::Inputs(const std::vector<Input>& vec) {
+  inputs = vec;
 }
 
 // Input == Input
@@ -162,56 +166,56 @@ bool operator==(const Input& lhs, const Input& rhs) {
 }
 
 // Input + Input
-std::vector<Input> operator+(const Input& lhs, const Input& rhs) {
-    return {lhs, rhs};
+Inputs operator+(const Input& lhs, const Input& rhs) {
+  return Inputs({lhs, rhs});
 }
 
 // Input + vector<Input>
-std::vector<Input> operator+(const Input& lhs, const std::vector<Input>& rhs) {
-    std::vector<Input> result;
-    result.reserve(rhs.size() + 1);
-    result.push_back(lhs);
-    result.insert(result.end(), rhs.begin(), rhs.end());
-    return result;
+Inputs operator+(const Input& lhs, const Inputs& rhs) {
+  std::vector<Input> result;
+  result.reserve(rhs.size() + 1);
+  result.push_back(lhs);
+  result.insert(result.end(), rhs.begin(), rhs.end());
+  return Inputs(result);
 }
 
 // vector<Input> + Input
-std::vector<Input> operator+(const std::vector<Input>& lhs, const Input& rhs) {
-    std::vector<Input> result = lhs;
-    result.push_back(rhs);
-    return result;
+Inputs operator+(const Inputs& lhs, const Input& rhs) {
+  std::vector<Input> result = lhs;
+  result.push_back(rhs);
+  return Inputs(result);
 }
 
 // vector<Input> + vector<Input>
-std::vector<Input> operator+(const std::vector<Input>& lhs, const std::vector<Input>& rhs) {
-    std::vector<Input> result = lhs;
-    result.insert(result.end(), rhs.begin(), rhs.end());
-    return result;
+Inputs operator+(const Inputs& lhs, const Inputs& rhs) {
+  std::vector<Input> result = lhs;
+  result.insert(result.end(), rhs.begin(), rhs.end());
+  return Inputs(result);
 }
 
 // vector<Input> += Input
-std::vector<Input>& operator+=(std::vector<Input>& lhs, const Input& rhs) {
-    lhs.push_back(rhs);
-    return lhs;
+Inputs& operator+=(Inputs& lhs, const Input& rhs) {
+  lhs.push_back(rhs);
+  return lhs;
 }
 
 // vector<Input> += vector<Input>
-std::vector<Input>& operator+=(std::vector<Input>& lhs, const std::vector<Input>& rhs) {
-    lhs.insert(lhs.end(), rhs.begin(), rhs.end());
-    return lhs;
+Inputs& operator+=(Inputs& lhs, const Inputs& rhs) {
+  lhs.insert(lhs.end(), rhs.begin(), rhs.end());
+  return lhs;
 }
 
 // vector<Input> - Input
-std::vector<Input> operator-(const std::vector<Input>& lhs, const Input& rhs) {
+Inputs operator-(const Inputs& lhs, const Input& rhs) {
   std::vector<Input> result;
   std::copy_if(lhs.begin(), lhs.end(), std::back_inserter(result),
                [&rhs](const Input& x) { return !(x == rhs); });
-  return result;
+  return Inputs(result);
 }
 
 // vector<Input> - vector<Input>
-std::vector<Input> operator-(const std::vector<Input>& lhs, const std::vector<Input>& rhs) {
-  std::vector<Input> result = lhs;
+Inputs operator-(const Inputs& lhs, const Inputs& rhs) {
+  Inputs result = lhs;
   for (const auto& r : rhs) {
     result = result - r; // 上のoperator-を再利用
   }
@@ -219,7 +223,7 @@ std::vector<Input> operator-(const std::vector<Input>& lhs, const std::vector<In
 }
 
 // vector<Input> -= Input
-std::vector<Input>& operator-=(std::vector<Input>& lhs, const Input& rhs) {
+Inputs& operator-=(Inputs& lhs, const Input& rhs) {
   lhs.erase(
     std::remove(lhs.begin(), lhs.end(), rhs),
     lhs.end()
@@ -228,7 +232,7 @@ std::vector<Input>& operator-=(std::vector<Input>& lhs, const Input& rhs) {
 }
 
 // vector<Input> -= vector<Input>
-std::vector<Input>& operator-=(std::vector<Input>& lhs, const std::vector<Input>& rhs) {
+Inputs& operator-=(Inputs& lhs, const Inputs& rhs) {
   for (const auto& r : rhs) {
     lhs -= r;
   }

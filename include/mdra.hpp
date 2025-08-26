@@ -36,33 +36,43 @@ private:
   int valid_time = 0;
 public:
   struct input_event ev = {0};
-  
+
   // constructor
   Input() = delete;
   Input(const Input&) = default;
   Input(const EvType& type, const EvCode& code);
 
   // check codes
-  bool isValid(const Input* input);
+  bool isValid() const;
+  explicit operator bool() const;
+};
+
+class Inputs : public std::vector<Input> {
+private:
+  std::vector<Input> inputs;
+public:
+  // constructor
+  Inputs(const std::vector<Input>& vec = {});
+
   explicit operator bool() const;
 };
 
 // custom operator
-bool operator==(const Input& lhs, const Input& rhs);                                          // Input == Input
+bool operator==(const Input& lhs, const Input& rhs);      // Input == Input
 
-std::vector<Input> operator+(const Input& lhs, const Input& rhs);                             // Input + Input
-std::vector<Input> operator+(const Input& lhs, const std::vector<Input>& rhs);                // Input + vector<Input>
-std::vector<Input> operator+(const std::vector<Input>& lhs, const Input& rhs);                // vector<Input> + Input
-std::vector<Input> operator+(const std::vector<Input>& lhs, const std::vector<Input>& rhs);   // vector<Input> + vector<Input>
+Inputs operator+(const Input& lhs, const Input& rhs);     // Input + Input
+Inputs operator+(const Input& lhs, const Inputs& rhs);    // Input + Inputs
+Inputs operator+(const Inputs& lhs, const Input& rhs);    // Inputs + Input
+Inputs operator+(const Inputs& lhs, const Inputs& rhs);   // Inputs + Inputs
 
-std::vector<Input>& operator+=(std::vector<Input>& lhs, const Input& rhs);                    // vector<Input> += Input
-std::vector<Input>& operator+=(std::vector<Input>& lhs, const std::vector<Input>& rhs);       // vector<Input> += vector<Input>
+Inputs& operator+=(Inputs& lhs, const Input& rhs);        // Inputs += Input
+Inputs& operator+=(Inputs& lhs, const Inputs& rhs);       // Inputs += Inputs
 
-std::vector<Input> operator-(const std::vector<Input>& lhs, const Input& rhs);                // vector<Input> - Input
-std::vector<Input> operator-(const std::vector<Input>& lhs, const std::vector<Input>& rhs);   // vector<Input> - vector<Input>
+Inputs operator-(const Inputs& lhs, const Input& rhs);    // Inputs - Input
+Inputs operator-(const Inputs& lhs, const Inputs& rhs);   // Inputs - Inputs
 
-std::vector<Input>& operator+=(std::vector<Input>& lhs, const Input& rhs);                    // vector<Input> -= Input
-std::vector<Input>& operator+=(std::vector<Input>& lhs, const std::vector<Input>& rhs);       // vector<Input> -= vector<Input>
+Inputs& operator+=(Inputs& lhs, const Input& rhs);        // Inputs -= Input
+Inputs& operator+=(Inputs& lhs, const Inputs& rhs);       // Inputs -= Inputs
 
 enum class DevicePreset {
   Keyboard,
@@ -72,7 +82,7 @@ enum class DevicePreset {
 
 class DeviceInputList {
 public:
-  std::vector<Input> inputs;
+  Inputs inputs;
 
   static DeviceInputList getConfigForPreset(DevicePreset preset);
 };
