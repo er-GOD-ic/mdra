@@ -8,6 +8,9 @@ using namespace mdra;
 
 namespace kbd {
 
+// Sync event
+inline Input updater(EV_SYN, SYN_REPORT, 0);
+
 // Non-Charactor Keys
 inline Input ESC(EV_KEY, KEY_ESC);
 
@@ -179,7 +182,7 @@ inline Input EURO(EV_KEY, KEY_EURO);
 
 
 inline Inputs general_kbd_keys = {
-  ESC, DELETE, BACKSPACE, ENTER, TAB, CAPS, NUMLOCK, SCROLLLOCK,
+  updater, ESC, DELETE, BACKSPACE, ENTER, TAB, CAPS, NUMLOCK, SCROLLLOCK,
   HOME, END, PAGEUP, PAGEDOWN, SCALE, SYSRQ, INSERT, LEFT, DOWN, UP, RIGHT,
   LSHIFT, LCTRL, LMETA, LALT, RSHIFT, RCTRL, RMETA, RALT,
   N_1, N_2, N_3, N_4, N_5, N_6, N_7, N_8, N_9, N_0,
