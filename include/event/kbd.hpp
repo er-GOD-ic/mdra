@@ -1,5 +1,3 @@
-#include <array>
-#include <functional>
 #include <linux/input-event-codes.h>
 
 #include "mdra.hpp"
@@ -180,7 +178,7 @@ inline Input COMPOSE(EV_KEY, KEY_COMPOSE);
 inline Input EURO(EV_KEY, KEY_EURO);
 
 
-inline std::array<std::reference_wrapper<Input>, GENERAL_KBD_KEYS> general_kbd_keys = {
+inline Inputs general_kbd_keys = {
   ESC, DELETE, BACKSPACE, ENTER, TAB, CAPS, NUMLOCK, SCROLLLOCK,
   HOME, END, PAGEUP, PAGEDOWN, SCALE, SYSRQ, INSERT, LEFT, DOWN, UP, RIGHT,
   LSHIFT, LCTRL, LMETA, LALT, RSHIFT, RCTRL, RMETA, RALT,

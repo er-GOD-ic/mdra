@@ -5,7 +5,9 @@
 using namespace mdra;
 using namespace kbd;
 
-class MyKBD : VirtualDevice {
+class MyKBD : public VirtualDevice {
+  using VirtualDevice::VirtualDevice;
+
   void remap() override {
     // arrow keys
     CAPS + H >> LEFT;
@@ -15,9 +17,9 @@ class MyKBD : VirtualDevice {
 
     // utils
     bool caps_used_as_modi = false;
-    if(CAPS + !(general_kbd_keys - CAPS)) caps_used_as_modi = true;
-    CAPS + X >> DEL;
-    CAPS. & !caps_used_as_modi >> BACKSPACE;
+    if (CAPS && !(general_kbd_keys - CAPS)) caps_used_as_modi = true;
+    CAPS + X >> DELETE;
+    if (CAPS && !caps_used_as_modi) BACKSPACE;
   }
 };
 
@@ -26,7 +28,6 @@ int main() {
 
   MyKBD kbd("TestKBD", DevicePreset::Keyboard);
   kbd.create();
-
 
   std::string dummy;
   std::cin >> dummy;

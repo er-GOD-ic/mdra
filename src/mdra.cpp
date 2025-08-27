@@ -151,6 +151,15 @@ Input::operator bool() const {
   return isValid();
 }
 
+Inputs::operator bool() const {
+  for (auto& t : *this) {
+    // if there is even one false, result is false.
+    if (!t.isValid()) return false;
+  }
+  // if there is no false, return true.
+  return true;
+}
+
 Input::Input(const EvType& type, const EvCode& code) {
   ev.type = type;
   ev.code = code;

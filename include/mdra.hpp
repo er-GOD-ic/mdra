@@ -42,13 +42,18 @@ public:
   Input(const Input&) = default;
   Input(const EvType& type, const EvCode& code);
 
-  // check codes
-  bool isValid() const;
+  // check code
   explicit operator bool() const;
+  bool isValid() const;
+  // send code
+  void send();
 };
 
 class Inputs : public std::vector<Input> {
 public:
+  // constructor
+  using std::vector<Input>::vector;
+
   explicit operator bool() const;
 };
 
