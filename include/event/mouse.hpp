@@ -1,5 +1,3 @@
-#include <array>
-#include <functional>
 #include <linux/input-event-codes.h>
 
 #include "mdra.hpp"
@@ -22,7 +20,7 @@ inline Input WHEEL(EV_REL, REL_WHEEL);
 inline Input WHEEL_HI_RES(EV_REL, REL_WHEEL_HI_RES);
 inline Input HWHEEL_HI_RES(EV_REL, REL_HWHEEL_HI_RES);
 
-inline std::array<std::reference_wrapper<Input>, GENERAL_MOUSE_EVENTS> general_mouse_events = {
+inline Inputs general_mouse_events = {
   LEFT, RIGHT, MIDDLE, SIDE, EXTRA, X, Y,
   HWHEEL, WHEEL, WHEEL_HI_RES, HWHEEL_HI_RES
 };

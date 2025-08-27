@@ -63,10 +63,10 @@ DeviceInputList DeviceInputList::getConfigForPreset(DevicePreset type) {
   DeviceInputList config;
   switch (type) {
     case DevicePreset::Keyboard:
-      for (auto& ref : kbd::general_kbd_keys) { config.inputs += ref.get(); }
+      for (auto& ref : kbd::general_kbd_keys) { config.inputs += ref; }
       break;
     case DevicePreset::Mouse:
-      for (auto& ref : mouse::general_mouse_events) { config.inputs += ref.get(); }
+      for (auto& ref : mouse::general_mouse_events) { config.inputs += ref; }
       break;
     case DevicePreset::Other:
       break;
