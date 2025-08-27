@@ -156,10 +156,6 @@ Input::Input(const EvType& type, const EvCode& code) {
   ev.code = code;
 }
 
-Inputs::Inputs(const std::vector<Input>& vec) {
-  inputs = vec;
-}
-
 // Input == Input
 bool operator==(const Input& lhs, const Input& rhs) {
   return lhs.ev.type == rhs.ev.type && lhs.ev.code == rhs.ev.code;
@@ -172,25 +168,25 @@ Inputs operator+(const Input& lhs, const Input& rhs) {
 
 // Input + vector<Input>
 Inputs operator+(const Input& lhs, const Inputs& rhs) {
-  std::vector<Input> result;
+  Inputs result;
   result.reserve(rhs.size() + 1);
   result.push_back(lhs);
   result.insert(result.end(), rhs.begin(), rhs.end());
-  return Inputs(result);
+  return result;
 }
 
 // vector<Input> + Input
 Inputs operator+(const Inputs& lhs, const Input& rhs) {
-  std::vector<Input> result = lhs;
+  Inputs result = lhs;
   result.push_back(rhs);
-  return Inputs(result);
+  return result;
 }
 
 // vector<Input> + vector<Input>
 Inputs operator+(const Inputs& lhs, const Inputs& rhs) {
-  std::vector<Input> result = lhs;
+  Inputs result = lhs;
   result.insert(result.end(), rhs.begin(), rhs.end());
-  return Inputs(result);
+  return result;
 }
 
 // vector<Input> += Input
@@ -207,10 +203,10 @@ Inputs& operator+=(Inputs& lhs, const Inputs& rhs) {
 
 // vector<Input> - Input
 Inputs operator-(const Inputs& lhs, const Input& rhs) {
-  std::vector<Input> result;
+  Inputs result;
   std::copy_if(lhs.begin(), lhs.end(), std::back_inserter(result),
                [&rhs](const Input& x) { return !(x == rhs); });
-  return Inputs(result);
+  return result;
 }
 
 // vector<Input> - vector<Input>

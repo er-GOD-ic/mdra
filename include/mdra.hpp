@@ -48,12 +48,7 @@ public:
 };
 
 class Inputs : public std::vector<Input> {
-private:
-  std::vector<Input> inputs;
 public:
-  // constructor
-  Inputs(const std::vector<Input>& vec = {});
-
   explicit operator bool() const;
 };
 
